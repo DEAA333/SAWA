@@ -1,5 +1,7 @@
 // tasks/data/models/task_model.dart
 
+import '../../domain/entities/task_entity.dart';
+
 class Task {
   final String id;
   final String name;
@@ -7,9 +9,9 @@ class Task {
   final String assigneeId;
   final String assigneeName;
   final String assigneeAvatar;
-  final String status;       // pending, completed, rejected
-  final String priority;     // high, medium, low
-  final String category;     // task, purchase
+  final String status;
+  final String priority;
+  final String category;
   final String dueDate;
   final String dueTime;
   final int points;
@@ -73,6 +75,27 @@ class Task {
       'completion_note': completionNote,
       'created_at': createdAt,
     };
+  }
+
+  // ✅ الإضافة المهمة: تحويل Model -> Entity
+  TaskEntity toEntity() {
+    return TaskEntity(
+      id: id,
+      name: name,
+      description: description,
+      assigneeId: assigneeId,
+      assigneeName: assigneeName,
+      assigneeAvatar: assigneeAvatar,
+      status: status,
+      priority: priority,
+      category: category,
+      dueDate: dueDate,
+      dueTime: dueTime,
+      points: points,
+      rejectionReason: rejectionReason,
+      completionNote: completionNote,
+      createdAt: createdAt,
+    );
   }
 
   Task copyWith({

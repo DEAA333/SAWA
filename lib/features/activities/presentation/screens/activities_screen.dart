@@ -51,7 +51,14 @@ class ActivitiesScreen extends GetView<ActivitiesController> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const Icon(Icons.arrow_forward, color: Colors.transparent),
+          IconButton(
+            onPressed: () => Get.back(),
+            icon: const Icon(Icons.arrow_back),
+            style: IconButton.styleFrom(
+              padding: EdgeInsets.zero,
+              minimumSize: Size.zero,
+            ),
+          ),
           // placeholder
           Text(
             'الأنشطة',
@@ -61,7 +68,14 @@ class ActivitiesScreen extends GetView<ActivitiesController> {
               color: AppColors.textPrimary,
             ),
           ),
-          const Icon(Icons.search_outlined),
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(Icons.search),
+            style: IconButton.styleFrom(
+              padding: EdgeInsets.zero,
+              minimumSize: Size.zero,
+            ),
+          ),
         ],
       ),
     );
@@ -100,7 +114,7 @@ class ActivitiesScreen extends GetView<ActivitiesController> {
           decoration: BoxDecoration(
             color: active ? AppColors.primary : Colors.white,
             borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: AppColors.primary),
+            border: Border.all(color: AppColors.primary),
           ),
           child: Text(
             title,
@@ -139,7 +153,7 @@ class ActivitiesScreen extends GetView<ActivitiesController> {
               final tasks = controller.filteredTasksList;
               if (tasks.isEmpty) return _buildEmptyState();
               return ListView.separated(
-                 padding: const EdgeInsets.symmetric(
+                padding: const EdgeInsets.symmetric(
                   horizontal: AppSizes.paddingM,
                 ),
                 itemCount: tasks.length,
@@ -166,7 +180,7 @@ class ActivitiesScreen extends GetView<ActivitiesController> {
   // ==============================
   Widget _buildPurchasesContent() {
     return Directionality(
-        textDirection: TextDirection.ltr,
+      textDirection: TextDirection.ltr,
       child: Column(
         children: [
           // بطاقة إجمالي المصاريف
@@ -319,7 +333,7 @@ class ActivitiesScreen extends GetView<ActivitiesController> {
                   vertical: 6,
                 ),
                 decoration: BoxDecoration(
-                  color: active ?  Color(0xFFE9EFFD) : Colors.white,
+                  color: active ? Color(0xFFE9EFFD) : Colors.white,
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
                     color: active ? AppColors.primary : Colors.grey.shade300,
