@@ -511,20 +511,17 @@
                                   width: 6,
                                   height: 6,
                                   decoration: BoxDecoration(
-                                    color: task.status == 'completed'
-                                        ? Colors.green
-                                        : Colors.orange,
+                                    color: task.statusColor,
                                     shape: BoxShape.circle,
                                   ),
                                 ),
                                 const SizedBox(width: 4),
                                 Text(
-                                  task.status == 'completed' ? 'منجزة' : 'معلقة',
+                                  task.statusLabel,
                                   style: AppTextStyles.splashSubtitle.copyWith(
                                     fontSize: 11,
-                                    color: task.status == 'completed'
-                                        ? Colors.green
-                                        : Colors.orange,
+                                    color: task.statusColor,
+
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
@@ -567,7 +564,7 @@
     }
 
     void _showTaskDetails(Task task) {
-      print('Task tapped: ${task.name}');
+      Get.toNamed(AppRoutes.TASK_DETAILS, arguments: task);
     }
 
     void _showAddBottomSheet() {
@@ -580,7 +577,8 @@
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            textDirection: TextDirection.rtl,
             children: [
               // خط علوي
               Center(
@@ -670,9 +668,10 @@
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            textDirection: TextDirection.ltr,
             children: [
               // سهم
-              const Icon(Icons.arrow_back_ios, size: 16, color: Colors.grey),
+              const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
 
               // النص
               Expanded(
@@ -680,7 +679,7 @@
                   padding: const EdgeInsets.symmetric(
                       horizontal: AppSizes.paddingM),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         title,

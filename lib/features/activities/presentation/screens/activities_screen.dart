@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:sawa_app/core/constants/app_colors.dart';
 import 'package:sawa_app/core/constants/app_sizes.dart';
 import 'package:sawa_app/core/constants/text_styles.dart';
+import 'package:sawa_app/core/routes/app_pages.dart';
 import 'package:sawa_app/features/tasks/data/models/task_model.dart';
 import '../controllers/activities_controller.dart';
 
@@ -69,7 +70,7 @@ class ActivitiesScreen extends GetView<ActivitiesController> {
             ),
           ),
           IconButton(
-            onPressed: () {},
+            onPressed: ()  => Get.toNamed(AppRoutes.SEARCH),
             icon: const Icon(Icons.search),
             style: IconButton.styleFrom(
               padding: EdgeInsets.zero,
@@ -473,18 +474,15 @@ class ActivitiesScreen extends GetView<ActivitiesController> {
                         vertical: 3,
                       ),
                       decoration: BoxDecoration(
-                        color: task.status == 'completed'
-                            ? Colors.green.shade50
-                            : Colors.orange.shade50,
+                        color: task.statusBackgroundColor,
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: Text(
-                        task.status == 'completed' ? 'مكتملة' : 'معلقة',
+                        task.statusLabel,
                         style: AppTextStyles.splashSubtitle.copyWith(
                           fontSize: 11,
-                          color: task.status == 'completed'
-                              ? Colors.green
-                              : Colors.orange,
+                          color: task.statusColor,
+
                         ),
                       ),
                     ),
@@ -529,7 +527,7 @@ class ActivitiesScreen extends GetView<ActivitiesController> {
             width: 10,
             height: 10,
             decoration: BoxDecoration(
-              color: task.status == 'completed' ? Colors.green : Colors.blue,
+              color: task.statusColor,
               shape: BoxShape.circle,
             ),
           ),

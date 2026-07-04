@@ -27,6 +27,13 @@ import 'package:sawa_app/features/auth/presentation/screens/login_screen.dart';
 import 'package:sawa_app/features/onboarding/presentation/screens/onboarding_screen.dart';
 import 'package:sawa_app/features/statistics/presentation/bindings/statistics_binding.dart';
 import 'package:sawa_app/features/statistics/presentation/screens/statistics_screen.dart';
+import 'package:sawa_app/features/tasks/presentation/bindings/add_task_binding.dart';
+import 'package:sawa_app/features/tasks/presentation/bindings/task_details_binding.dart';
+import 'package:sawa_app/features/tasks/presentation/screens/add_task_screen.dart';
+import 'package:sawa_app/features/tasks/presentation/screens/complete_task_screen.dart';
+import 'package:sawa_app/features/tasks/presentation/screens/task_details_screen.dart';
+import 'package:sawa_app/search/presentation/bindings/search_binding.dart';
+import 'package:sawa_app/search/presentation/screens/search_screen.dart';
 import '../../features/splash/presentation/screens/splash_screen.dart';
 
 part 'app_routes.dart';
@@ -109,6 +116,26 @@ class AppPages {
       name: AppRoutes.STATISTICS,
       page: () => const StatisticsScreen(),
       binding: StatisticsBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.ADD_TASK,
+      page: () => const AddTaskScreen(),
+      binding: AddTaskBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.TASK_DETAILS,
+      page: () => const TaskDetailsScreen(),
+      binding: TaskDetailsBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.COMPLETE_TASK,
+      page: () => const CompleteTaskScreen(),
+      binding: TaskDetailsBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.SEARCH,
+      page: () => const SearchScreen(),
+      binding: SearchBinding(),
     ),
   ];
 }

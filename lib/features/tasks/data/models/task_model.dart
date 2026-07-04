@@ -1,5 +1,5 @@
 // tasks/data/models/task_model.dart
-
+import 'package:flutter/material.dart';
 import '../../domain/entities/task_entity.dart';
 
 class Task {
@@ -77,7 +77,6 @@ class Task {
     };
   }
 
-  // ✅ الإضافة المهمة: تحويل Model -> Entity
   TaskEntity toEntity() {
     return TaskEntity(
       id: id,
@@ -132,5 +131,50 @@ class Task {
       completionNote: completionNote ?? this.completionNote,
       createdAt: createdAt ?? this.createdAt,
     );
+  }
+} // ⬅️ هون بينسكر الكلاس Task فعليًا
+
+// ⬅️ الـ extension هون برا، مستقل تمامًا عن الكلاس
+extension TaskStatusX on Task {
+  String get statusLabel {
+    switch (status) {
+      case 'completed':
+        return 'مكتملة';
+      case 'accepted':
+        return 'مقبولة';
+      case 'rejected':
+        return 'مرفوضة';
+      case 'pending':
+      default:
+        return 'معلقة';
+    }
+  }
+
+  Color get statusColor {
+    switch (status) {
+      case 'completed':
+        return Colors.green;
+      case 'accepted':
+        return Colors.blue;
+      case 'rejected':
+        return Colors.red;
+      case 'pending':
+      default:
+        return Colors.orange;
+    }
+  }
+
+  Color get statusBackgroundColor {
+    switch (status) {
+      case 'completed':
+        return Colors.green.shade50;
+      case 'accepted':
+        return Colors.blue.shade50;
+      case 'rejected':
+        return Colors.red.shade50;
+      case 'pending':
+      default:
+        return Colors.orange.shade50;
+    }
   }
 }

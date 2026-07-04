@@ -5,7 +5,7 @@ class ActivitiesController extends GetxController {
   final selectedTab = 0.obs;
 
   // الفلاتر الفرعية
-  final taskFilters = ['الكل', 'اليوم', 'قائمة', 'مرفوضة'];
+  final taskFilters = ['الكل', 'اليوم', 'قادمة', 'مرفوضة'];
   final purchaseFilters = ['الكل', 'طعام', 'تنظيف', 'فواتير', 'صحة', 'أخرى'];
   final selectedTaskFilter = 'الكل'.obs;
   final selectedPurchaseFilter = 'الكل'.obs;
