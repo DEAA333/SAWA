@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:sawa_app/core/constants/app_colors.dart';
 import 'package:sawa_app/core/constants/app_sizes.dart';
 import 'package:sawa_app/core/constants/text_styles.dart';
+import 'package:sawa_app/core/routes/app_pages.dart';
 import 'package:sawa_app/features/tasks/data/models/task_model.dart';
 import '../controllers/search_controller.dart';
 import '../widgets/task_filter_bottom_sheet.dart';
@@ -136,7 +137,7 @@ class SearchScreen extends GetView<SearchPageController> {
         textDirection: TextDirection.ltr,
         children: [
           GestureDetector(
-            onTap: () => TaskFilterBottomSheet.show(context),
+            onTap: () => Get.toNamed(AppRoutes.ADD_PURCHASE),
             child: Obx(
                   () => Row(
                 children: [

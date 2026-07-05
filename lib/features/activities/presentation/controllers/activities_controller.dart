@@ -77,10 +77,16 @@ class ActivitiesController extends GetxController {
     // TODO (API): await purchasesRepo.deletePurchase(id);
   }
 
+
   void _updateTotalExpenses() {
     totalExpenses.value = purchasesList.fold(0, (sum, p) => sum + p.points);
   }
 
+  void addPurchase(Task purchase) {
+    purchasesList.add(purchase);
+    _applyPurchaseFilter(); // ⬅️ يحدث filteredPurchasesList تلقائياً
+    _updateTotalExpenses();
+  }
   void _loadMockData() {
     isLoading.value = true;
 

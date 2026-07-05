@@ -25,6 +25,8 @@ import 'package:sawa_app/features/onboarding/presentation/bindings/onboarding_bi
 import 'package:sawa_app/features/auth/presentation/bindings/login_binding.dart';
 import 'package:sawa_app/features/auth/presentation/screens/login_screen.dart';
 import 'package:sawa_app/features/onboarding/presentation/screens/onboarding_screen.dart';
+import 'package:sawa_app/features/purchases/presentation/bindings/add_purchase_binding.dart';
+import 'package:sawa_app/features/purchases/presentation/screens/add_purchase_screen.dart';
 import 'package:sawa_app/features/statistics/presentation/bindings/statistics_binding.dart';
 import 'package:sawa_app/features/statistics/presentation/screens/statistics_screen.dart';
 import 'package:sawa_app/features/tasks/presentation/bindings/add_task_binding.dart';
@@ -136,6 +138,11 @@ class AppPages {
       name: AppRoutes.SEARCH,
       page: () => const SearchScreen(),
       binding: SearchBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.ADD_PURCHASE,
+      page: () => const AddPurchaseScreen(),
+      binding: AddPurchaseBinding(),
     ),
   ];
 }
