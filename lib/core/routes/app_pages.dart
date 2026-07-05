@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:sawa_app/core/bindings/initial_binding.dart';
 import 'package:sawa_app/features/auth/presentation/bindings/forgot_password_binding.dart';
 import 'package:sawa_app/features/auth/presentation/bindings/new_Password_binding.dart';
 import 'package:sawa_app/features/auth/presentation/bindings/otp_binding.dart';
@@ -36,7 +37,7 @@ import 'package:sawa_app/features/tasks/presentation/screens/complete_task_scree
 import 'package:sawa_app/features/tasks/presentation/screens/task_details_screen.dart';
 import 'package:sawa_app/search/presentation/bindings/search_binding.dart';
 import 'package:sawa_app/search/presentation/screens/search_screen.dart';
-import '../../features/splash/presentation/screens/splash_screen.dart';
+ import '../../features/splash/presentation/screens/splash_screen.dart';
 
 part 'app_routes.dart';
 
@@ -144,5 +145,6 @@ class AppPages {
       page: () => const AddPurchaseScreen(),
       binding: AddPurchaseBinding(),
     ),
+
   ];
 }

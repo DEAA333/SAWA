@@ -4,6 +4,7 @@
   import 'package:sawa_app/core/constants/app_sizes.dart';
   import 'package:sawa_app/core/constants/text_styles.dart';
   import 'package:sawa_app/core/routes/app_pages.dart';
+import 'package:sawa_app/features/activities/presentation/controllers/activities_controller.dart';
   import 'package:sawa_app/features/tasks/data/models/task_model.dart';
   import 'package:sawa_app/features/home/presentation/controllers/home_controller.dart';
   import 'package:sawa_app/features/tasks/data/models/task_model.dart';
@@ -38,26 +39,44 @@
               const SizedBox(height: AppSizes.paddingM),
 
               // قائمة المهام الديناميكية
-              Obx(
-                    () =>
-                    ListView.separated(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: controller.tasksList.length,
-                      separatorBuilder: (context, index) =>
-                      const SizedBox(height: AppSizes.paddingS),
-                      itemBuilder: (context, index) {
-                        final task = controller.tasksList[index];
-                        return _buildTaskItem(
-                          task: task,
-                          onTap: () {
-                            _showTaskDetails(task);
-                          },
-                        );
-                      },
-                    ),
-              ),
-
+              // Obx(
+              //       () =>
+              //       ListView.separated(
+              //         shrinkWrap: true,
+              //         physics: const NeverScrollableScrollPhysics(),
+              //         itemCount: controller.tasksList.length,
+              //         separatorBuilder: (context, index) =>
+              //         const SizedBox(height: AppSizes.paddingS),
+              //         itemBuilder: (context, index) {
+              //           final task = controller.tasksList[index];
+              //           return _buildTaskItem(
+              //             task: task,
+              //             onTap: () {
+              //               _showTaskDetails(task);
+              //             },
+              //           );
+              //         },
+              //       ),
+              // ),
+              Obx(() {
+                final allItems = [
+                  ...Get.find<ActivitiesController>().tasksList,
+                  ...Get.find<ActivitiesController>().purchasesList,
+                ];
+                return ListView.separated(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: allItems.length,
+                  separatorBuilder: (_, __) => const SizedBox(height: AppSizes.paddingS),
+                  itemBuilder: (context, index) {
+                    final task = allItems[index];
+                    return _buildTaskItem(
+                      task: task,
+                      onTap: () => _showTaskDetails(task),
+                    );
+                  },
+                );
+              }),
               const SizedBox(height: AppSizes.paddingXL),
 
             ],

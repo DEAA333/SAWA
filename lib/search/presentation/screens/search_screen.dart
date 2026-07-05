@@ -25,14 +25,15 @@ class SearchScreen extends GetView<SearchPageController> {
               _buildSearchBar(context),
               const SizedBox(height: AppSizes.paddingS),
               Expanded(
-                child: Column(
+                child: Obx(
+                  () => Column(
                     children: [
                       _buildResultsHeader(context),
                       const SizedBox(height: AppSizes.paddingS),
                       Expanded(child: _buildResultsList()),
                     ],
                   ),
-
+                ),
               ),
             ],
           ),
@@ -112,12 +113,12 @@ class SearchScreen extends GetView<SearchPageController> {
               ),
             ),
             Obx(
-                  () => controller.searchText.value.isNotEmpty
+              () => controller.searchText.value.isNotEmpty
                   ? IconButton(
-                onPressed: controller.clearSearch,
-                icon: const Icon(Icons.close, size: 18),
-                color: AppColors.textSecondary,
-              )
+                      onPressed: controller.clearSearch,
+                      icon: const Icon(Icons.close, size: 18),
+                      color: AppColors.textSecondary,
+                    )
                   : const SizedBox(width: AppSizes.paddingS),
             ),
           ],
@@ -139,7 +140,7 @@ class SearchScreen extends GetView<SearchPageController> {
           GestureDetector(
             onTap: () => Get.toNamed(AppRoutes.ADD_PURCHASE),
             child: Obx(
-                  () => Row(
+              () => Row(
                 children: [
                   Icon(
                     Icons.filter_list,
@@ -166,10 +167,10 @@ class SearchScreen extends GetView<SearchPageController> {
             ),
           ),
           Obx(
-                () => Text(
-                  controller.searchText.value.isEmpty
-                      ? 'كل المهام'
-                      : '${controller.searchResults.length} نتائج لـ "${controller.searchText.value}"',
+            () => Text(
+              controller.searchText.value.isEmpty
+                  ? 'كل المهام'
+                  : '${controller.searchResults.length} نتائج لـ "${controller.searchText.value}"',
               style: AppTextStyles.splashSubtitle.copyWith(
                 fontSize: 12,
                 color: AppColors.textSecondary,
@@ -191,8 +192,7 @@ class SearchScreen extends GetView<SearchPageController> {
       return ListView.separated(
         padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
         itemCount: results.length,
-        separatorBuilder: (_, __) =>
-        const SizedBox(height: AppSizes.paddingS),
+        separatorBuilder: (_, __) => const SizedBox(height: AppSizes.paddingS),
         itemBuilder: (_, index) => _buildResultCard(results[index]),
       );
     });
@@ -262,7 +262,9 @@ class SearchScreen extends GetView<SearchPageController> {
                   children: [
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 3),
+                        horizontal: 8,
+                        vertical: 3,
+                      ),
                       decoration: BoxDecoration(
                         color: item.statusBackgroundColor,
                         borderRadius: BorderRadius.circular(6),
@@ -278,15 +280,20 @@ class SearchScreen extends GetView<SearchPageController> {
                     const SizedBox(width: 6),
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 3),
+                        horizontal: 8,
+                        vertical: 3,
+                      ),
                       decoration: BoxDecoration(
                         color: const Color(0xFFE9EFFD),
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: Row(
                         children: [
-                          Icon(Icons.access_time_outlined,
-                              size: 12, color: AppColors.primary),
+                          Icon(
+                            Icons.access_time_outlined,
+                            size: 12,
+                            color: AppColors.primary,
+                          ),
                           const SizedBox(width: 4),
                           Text(
                             item.dueDate.isEmpty ? 'اليوم' : item.dueDate,

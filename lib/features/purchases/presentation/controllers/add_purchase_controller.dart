@@ -58,15 +58,22 @@ class AddPurchaseController extends GetxController {
         points: int.tryParse(priceController.text) ?? 0,
       );
 
-      // ✅ أضف لـ ActivitiesController (شاشة الأنشطة)
-      if (Get.isRegistered<ActivitiesController>()) {
+      try {
         Get.find<ActivitiesController>().addPurchase(newPurchase);
+      } catch (e) {
+        // ActivitiesController مش موجود — مش متوقع لو الـ Home مفتوح
+        debugPrint('ActivitiesController not found: $e');
       }
 
-      // ✅ أضف لـ HomeController (شاشة الرئيسية)
-      if (Get.isRegistered<HomeController>()) {
-        Get.find<HomeController>().addTask(newPurchase);
-      }
+      // // ✅ أضف لـ ActivitiesController (شاشة الأنشطة)
+      // if (Get.isRegistered<ActivitiesController>()) {
+      //   Get.find<ActivitiesController>().addPurchase(newPurchase);
+      // }
+
+      // // ✅ أضف لـ HomeController (شاشة الرئيسية)
+      // if (Get.isRegistered<HomeController>()) {
+      //   Get.find<HomeController>().addTask(newPurchase);
+      // }
 
       _showSuccessDialog();
     });

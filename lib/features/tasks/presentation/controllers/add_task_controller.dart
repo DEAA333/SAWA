@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:sawa_app/features/activities/presentation/controllers/activities_controller.dart';
 import 'package:sawa_app/features/home/presentation/controllers/home_controller.dart';
 import 'package:sawa_app/features/tasks/data/models/task_model.dart';
 
@@ -54,9 +55,14 @@ class AddTaskController extends GetxController {
         category: 'task',
        );
 
-      // ⬅️ أضفها مباشرة على قائمة الـ Home
-      if (Get.isRegistered<HomeController>()) {
-        Get.find<HomeController>().addTask(newTask);
+      // // ⬅️ أضفها مباشرة على قائمة الـ Home
+      // if (Get.isRegistered<HomeController>()) {
+      //   Get.find<HomeController>().addTask(newTask);
+      // }
+
+      if (Get.isRegistered<ActivitiesController>()) {
+        Get.find<ActivitiesController>().tasksList.add(newTask);
+        Get.find<ActivitiesController>().filteredTasksList.add(newTask);
       }
 
       _showSuccessDialog();
