@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sawa_app/features/activities/presentation/controllers/activities_controller.dart';
-import 'package:sawa_app/features/home/presentation/controllers/home_controller.dart';
 import 'package:sawa_app/features/tasks/data/models/task_model.dart';
 
 class AddPurchaseController extends GetxController {
@@ -35,7 +34,11 @@ class AddPurchaseController extends GetxController {
   void confirmPurchase() {
     if (!formKey.currentState!.validate()) return;
     if (selectedAssigneeId.value.isEmpty) {
-      Get.snackbar('تنبيه', 'الرجاء اختيار الشخص المسؤول');
+      Get.snackbar(
+        'تنبيه',
+        'الرجاء اختيار الشخص المسؤول',
+        snackPosition: SnackPosition.BOTTOM,
+      );
       return;
     }
 
@@ -47,10 +50,10 @@ class AddPurchaseController extends GetxController {
 
       final newPurchase = Task(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
-        name: noteController.text.isEmpty
+        name: noteController.text.trim().isEmpty
             ? selectedCategory.value
-            : noteController.text,
-        description: noteController.text,
+            : noteController.text.trim(),
+        description: noteController.text.trim(),
         assigneeId: selectedAssigneeId.value,
         assigneeName: selectedAssigneeName.value,
         status: 'pending',
@@ -58,22 +61,11 @@ class AddPurchaseController extends GetxController {
         points: int.tryParse(priceController.text) ?? 0,
       );
 
-      try {
-        Get.find<ActivitiesController>().addPurchase(newPurchase);
-      } catch (e) {
-        // ActivitiesController مش موجود — مش متوقع لو الـ Home مفتوح
-        debugPrint('ActivitiesController not found: $e');
+      // ✅ نفس طريقة المهام بالضبط
+      if (Get.isRegistered<ActivitiesController>()) {
+        Get.find<ActivitiesController>().purchasesList.add(newPurchase);
+        Get.find<ActivitiesController>().filteredPurchasesList.add(newPurchase);
       }
-
-      // // ✅ أضف لـ ActivitiesController (شاشة الأنشطة)
-      // if (Get.isRegistered<ActivitiesController>()) {
-      //   Get.find<ActivitiesController>().addPurchase(newPurchase);
-      // }
-
-      // // ✅ أضف لـ HomeController (شاشة الرئيسية)
-      // if (Get.isRegistered<HomeController>()) {
-      //   Get.find<HomeController>().addTask(newPurchase);
-      // }
 
       _showSuccessDialog();
     });
@@ -100,14 +92,16 @@ class AddPurchaseController extends GetxController {
               ),
               const SizedBox(height: 16),
               const Text(
-                'تمت الإضافة',
+                'تمت الإضافة 🎉',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
-              Text(
-                'سيتلقى ${selectedAssigneeName.value} إشعاراً بالعنصر الجديد',
-                textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 13, color: Colors.grey),
+              Obx(
+                    () => Text(
+                  'سيتلقى ${selectedAssigneeName.value} إشعاراً بالعنصر الجديد',
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(fontSize: 13, color: Colors.grey),
+                ),
               ),
               const SizedBox(height: 24),
               SizedBox(
@@ -116,7 +110,7 @@ class AddPurchaseController extends GetxController {
                 child: ElevatedButton(
                   onPressed: () {
                     Get.back(); // أغلق الـ dialog
-                    Get.back(); // ارجع للمهام
+                    Get.back(); // ارجع للقائمة
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF2563EB),
