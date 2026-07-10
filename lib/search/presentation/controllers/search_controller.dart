@@ -10,8 +10,7 @@ class SearchPageController extends GetxController {
   final searchResults = <Task>[].obs;
   final isFilterApplied = false.obs;
 
-  // فلاتر البوتوم شيت
-  final statusFilters = ['الكل', 'اليوم', 'قائمة', 'مرفوضة'];
+  final statusFilters = ['الكل', 'اليوم', 'قادمة', 'مرفوضة']; // ✅ تصليح "قائمة" -> "قادمة"
   final priorityFilters = ['منخفضة', 'متوسطة', 'عالية'];
 
   final selectedStatusFilter = 'الكل'.obs;
@@ -44,46 +43,72 @@ class SearchPageController extends GetxController {
 
   void clearSearch() {
     searchText.value = '';
-    searchResults.clear();
+    _runSearch();
   }
 
   void _runSearch() {
-    // لو ما في نص، اعرض كل المهام بدون فلترة نص
     final sourceList = selectedTab.value == 0
         ? _activitiesController.tasksList
         : _activitiesController.purchasesList;
 
     var results = sourceList.toList();
 
-    // فلترة بالنص فقط لو في نص مكتوب
     if (searchText.value.trim().isNotEmpty) {
       results = results
           .where((item) => item.name.contains(searchText.value.trim()))
           .toList();
     }
 
-    // فلتر الحالة
+    // ✅ فلتر الحالة/التاريخ بنفس منطق شاشة الأنشطة
     if (selectedStatusFilter.value != 'الكل') {
-      results = results
-          .where((item) => item.status == selectedStatusFilter.value)
-          .toList();
+      if (selectedStatusFilter.value == 'مرفوضة') {
+        results = results.where((item) => item.status == 'rejected').toList();
+      } else if (selectedStatusFilter.value == 'اليوم') {
+        results = results.where((item) => _isToday(item.dueDate)).toList();
+      } else if (selectedStatusFilter.value == 'قادمة') {
+        results = results.where((item) => _isUpcoming(item.dueDate)).toList();
+      }
     }
 
-    // فلتر الأولوية
+    // ✅ فلتر الأولوية بعد تحويل التسمية العربية لكود داخلي
     if (selectedPriorityFilter.value.isNotEmpty) {
-      results = results
-          .where((item) => item.priority == selectedPriorityFilter.value)
-          .toList();
+      final code = TaskPriority.fromArabic(selectedPriorityFilter.value);
+      results = results.where((item) => item.priority == code).toList();
     }
 
-    // فلتر الشخص المسؤول
+    // ✅ فلتر الشخص المسؤول: بالـ id أو بالاسم احتياطياً (للبيانات القديمة)
     if (selectedAssigneeId.value.isNotEmpty) {
+      final name = assignees.firstWhereOrNull(
+            (m) => m['id'] == selectedAssigneeId.value,
+      )?['name'];
       results = results
-          .where((item) => item.assigneeId == selectedAssigneeId.value)
+          .where((item) =>
+      item.assigneeId == selectedAssigneeId.value ||
+          (name != null && item.assigneeName == name))
           .toList();
     }
 
     searchResults.value = results;
+  }
+
+  bool _isToday(String dueDate) {
+    if (dueDate.isEmpty) return false;
+    final parsed = DateTime.tryParse(dueDate);
+    if (parsed == null) return false;
+    final now = DateTime.now();
+    return parsed.year == now.year &&
+        parsed.month == now.month &&
+        parsed.day == now.day;
+  }
+
+  bool _isUpcoming(String dueDate) {
+    if (dueDate.isEmpty) return false;
+    final parsed = DateTime.tryParse(dueDate);
+    if (parsed == null) return false;
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final parsedDay = DateTime(parsed.year, parsed.month, parsed.day);
+    return parsedDay.isAfter(today);
   }
 
   void applyFilters({
@@ -108,4 +133,5 @@ class SearchPageController extends GetxController {
   }
 
 // TODO (API): استبدل البحث المحلي بـ SearchTasksUseCase مع query parameter
+
 }

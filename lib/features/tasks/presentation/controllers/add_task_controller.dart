@@ -7,6 +7,7 @@ import 'package:sawa_app/features/tasks/data/models/task_model.dart';
 class AddTaskController extends GetxController {
   final titleController = TextEditingController();
   final descriptionController = TextEditingController();
+  final dateController = TextEditingController();
   final formKey = GlobalKey<FormState>();
 
   final priorityOptions = ['منخفضة', 'متوسطة', 'عالية'];
@@ -23,6 +24,16 @@ class AddTaskController extends GetxController {
 
   final isLoading = false.obs;
 
+  @override
+  void onInit() {
+    super.onInit();
+    // ✅ افتراضيًا المهمة الجديدة تكون مستحقة اليوم، لحتى فلتر "اليوم" يشتغل مباشرة
+    dateController.text = _formatDate(DateTime.now());
+  }
+
+  String _formatDate(DateTime d) =>
+      '${d.year}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
+
   void selectAssignee(String id, String name) {
     selectedAssigneeId.value = id;
     selectedAssigneeName.value = name;
@@ -30,6 +41,19 @@ class AddTaskController extends GetxController {
 
   void selectPriority(String priority) {
     selectedPriority.value = priority;
+  }
+
+  Future<void> pickDate(BuildContext context) async {
+    final initial = DateTime.tryParse(dateController.text) ?? DateTime.now();
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: initial,
+      firstDate: DateTime.now().subtract(const Duration(days: 1)),
+      lastDate: DateTime.now().add(const Duration(days: 365)),
+    );
+    if (picked != null) {
+      dateController.text = _formatDate(picked);
+    }
   }
 
   void addTask() {
@@ -45,24 +69,21 @@ class AddTaskController extends GetxController {
     Future.delayed(const Duration(seconds: 1), () {
       isLoading.value = false;
 
-      // إنشاء المهمة الجديدة محلياً
       final newTask = Task(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         name: titleController.text,
+        description: descriptionController.text.trim(),
+        assigneeId: selectedAssigneeId.value,
         assigneeName: selectedAssigneeName.value,
         points: 0,
         status: 'pending',
         category: 'task',
-       );
-
-      // // ⬅️ أضفها مباشرة على قائمة الـ Home
-      // if (Get.isRegistered<HomeController>()) {
-      //   Get.find<HomeController>().addTask(newTask);
-      // }
+        priority: TaskPriority.fromArabic(selectedPriority.value), // ✅ تخزين صحيح
+        dueDate: dateController.text, // ✅ تاريخ حقيقي
+      );
 
       if (Get.isRegistered<ActivitiesController>()) {
-        Get.find<ActivitiesController>().tasksList.add(newTask);
-        Get.find<ActivitiesController>().filteredTasksList.add(newTask);
+        Get.find<ActivitiesController>().addTask(newTask);
       }
 
       _showSuccessDialog();
@@ -105,8 +126,8 @@ class AddTaskController extends GetxController {
                 height: 48,
                 child: ElevatedButton(
                   onPressed: () {
-                    Get.back(); // أغلق الـ dialog
-                    Get.back(); // ارجع للمهام
+                    Get.back();
+                    Get.back();
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF2563EB),
@@ -131,6 +152,7 @@ class AddTaskController extends GetxController {
   void onClose() {
     titleController.dispose();
     descriptionController.dispose();
+    dateController.dispose();
     super.onClose();
   }
 }

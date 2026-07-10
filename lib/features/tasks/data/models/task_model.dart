@@ -1,7 +1,26 @@
 // tasks/data/models/task_model.dart
 import 'package:flutter/material.dart';
 import '../../domain/entities/task_entity.dart';
+// تحويل الأولوية بين الكود الداخلي (إنجليزي) والعرض بالعربي
+class TaskPriority {
+  static const low = 'low';
+  static const medium = 'medium';
+  static const high = 'high';
 
+  static const Map<String, String> _labels = {
+    low: 'منخفضة',
+    medium: 'متوسطة',
+    high: 'عالية',
+  };
+
+  static String toArabic(String code) => _labels[code] ?? _labels[medium]!;
+
+  static String fromArabic(String label) {
+    return _labels.entries
+        .firstWhere((e) => e.value == label, orElse: () => const MapEntry(medium, 'متوسطة'))
+        .key;
+  }
+}
 class Task {
   final String id;
   final String name;
@@ -177,4 +196,6 @@ extension TaskStatusX on Task {
         return Colors.orange.shade50;
     }
   }
+
+  String get priorityLabel => TaskPriority.toArabic(priority);
 }

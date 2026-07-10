@@ -70,7 +70,7 @@ class ActivitiesScreen extends GetView<ActivitiesController> {
             ),
           ),
           IconButton(
-            onPressed: ()  => Get.toNamed(AppRoutes.SEARCH),
+            onPressed: () => Get.toNamed(AppRoutes.SEARCH),
             icon: const Icon(Icons.search),
             style: IconButton.styleFrom(
               padding: EdgeInsets.zero,
@@ -165,7 +165,11 @@ class ActivitiesScreen extends GetView<ActivitiesController> {
                   return _buildDismissibleItem(
                     id: task.id,
                     onDelete: () => controller.deleteTask(task.id),
-                    child: _buildTaskCard(task),
+                    onEdit: () => Get.toNamed(AppRoutes.EDIT_TASK, arguments: task),
+                    child: GestureDetector(
+                      onTap: () => Get.toNamed(AppRoutes.TASK_DETAILS, arguments: task),
+                      child: _buildTaskCard(task),
+                    ),
                   );
                 },
               );
@@ -219,7 +223,11 @@ class ActivitiesScreen extends GetView<ActivitiesController> {
                   return _buildDismissibleItem(
                     id: purchase.id,
                     onDelete: () => controller.deletePurchase(purchase.id),
-                    child: _buildPurchaseCard(purchase),
+                    onEdit: () => Get.toNamed(AppRoutes.EDIT_PURCHASE, arguments: purchase),
+                    child: GestureDetector(
+                      onTap: () => Get.toNamed(AppRoutes.TASK_DETAILS, arguments: purchase),
+                      child: _buildPurchaseCard(purchase),
+                    ),
                   );
                 },
               );
@@ -362,6 +370,7 @@ class ActivitiesScreen extends GetView<ActivitiesController> {
   Widget _buildDismissibleItem({
     required String id,
     required VoidCallback onDelete,
+    VoidCallback? onEdit,
     required Widget child,
   }) {
     return Dismissible(
@@ -369,7 +378,7 @@ class ActivitiesScreen extends GetView<ActivitiesController> {
       direction: DismissDirection.startToEnd,
       confirmDismiss: (direction) async {
         // نعرض خيار حذف أو تعديل
-        return await _showSwipeActions(onDelete);
+        return await _showSwipeActions(onDelete, onEdit: onEdit);
       },
       background: Container(
         alignment: Alignment.centerLeft,
@@ -391,7 +400,10 @@ class ActivitiesScreen extends GetView<ActivitiesController> {
     );
   }
 
-  Future<bool?> _showSwipeActions(VoidCallback onDelete) async {
+  Future<bool?> _showSwipeActions(
+    VoidCallback onDelete, {
+    VoidCallback? onEdit,
+  }) async {
     return await Get.dialog<bool>(
       AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -413,7 +425,11 @@ class ActivitiesScreen extends GetView<ActivitiesController> {
               title: const Text('تعديل'),
               onTap: () {
                 Get.back(result: false);
-                // TODO: فتح شاشة التعديل
+                if (onEdit != null) {
+                  onEdit();
+                } else {
+                  Get.snackbar('قريباً', 'تعديل المشتريات قيد التطوير');
+                }
               },
             ),
           ],
@@ -482,7 +498,6 @@ class ActivitiesScreen extends GetView<ActivitiesController> {
                         style: AppTextStyles.splashSubtitle.copyWith(
                           fontSize: 11,
                           color: task.statusColor,
-
                         ),
                       ),
                     ),

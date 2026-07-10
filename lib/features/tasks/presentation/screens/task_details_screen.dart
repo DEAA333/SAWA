@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:sawa_app/core/constants/app_colors.dart';
 import 'package:sawa_app/core/constants/app_sizes.dart';
 import 'package:sawa_app/core/constants/text_styles.dart';
+import 'package:sawa_app/core/routes/app_pages.dart';
 import 'package:sawa_app/features/tasks/data/models/task_model.dart';
 import '../controllers/task_details_controller.dart';
 
@@ -12,6 +13,7 @@ class TaskDetailsScreen extends GetView<TaskDetailsController> {
   @override
   Widget build(BuildContext context) {
     final task = controller.task;
+    final bool isPurchase = task.category != 'task'; // ✅ الفرق الأساسي
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -30,7 +32,7 @@ class TaskDetailsScreen extends GetView<TaskDetailsController> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Text(
-                      'تفاصيل المهمة',
+                      isPurchase ? 'تفاصيل الشراء' : 'تفاصيل المهمة', // ✅ عنوان مختلف
                       style: AppTextStyles.splashSubtitle.copyWith(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -48,7 +50,7 @@ class TaskDetailsScreen extends GetView<TaskDetailsController> {
 
               const SizedBox(height: AppSizes.paddingM),
 
-              // بطاقة المهمة العلوية
+              // بطاقة العلوية
               Container(
                 padding: const EdgeInsets.all(AppSizes.paddingM),
                 decoration: BoxDecoration(
@@ -88,11 +90,19 @@ class TaskDetailsScreen extends GetView<TaskDetailsController> {
                                   color: const Color(0xFFE9EFFD),
                                   borderRadius: BorderRadius.circular(6),
                                 ),
-                                child: Row(
+                                child: isPurchase
+                                    ? Text(
+                                  task.category, // ✅ تصنيف بدل تاريخ للمشتريات
+                                  style: TextStyle(fontSize: 11, color: AppColors.primary),
+                                )
+                                    : Row(
                                   children: [
                                     Icon(Icons.access_time_outlined, size: 12, color: AppColors.primary),
                                     const SizedBox(width: 4),
-                                    Text('اليوم', style: TextStyle(fontSize: 11, color: AppColors.primary)),
+                                    Text(
+                                      task.dueDate.isEmpty ? 'اليوم' : task.dueDate, // ✅ تاريخ حقيقي
+                                      style: TextStyle(fontSize: 11, color: AppColors.primary),
+                                    ),
                                   ],
                                 ),
                               ),
@@ -100,10 +110,13 @@ class TaskDetailsScreen extends GetView<TaskDetailsController> {
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                                 decoration: BoxDecoration(
-                                  color: Colors.green.shade50,
+                                  color: task.statusBackgroundColor,
                                   borderRadius: BorderRadius.circular(6),
                                 ),
-                                child: const Text('مقبولة', style: TextStyle(fontSize: 11, color: Colors.green)),
+                                child: Text(
+                                  task.statusLabel, // ✅ حالة حقيقية بدل "مقبولة" ثابتة
+                                  style: TextStyle(fontSize: 11, color: task.statusColor),
+                                ),
                               ),
                             ],
                           ),
@@ -123,56 +136,78 @@ class TaskDetailsScreen extends GetView<TaskDetailsController> {
 
               const SizedBox(height: AppSizes.paddingL),
 
-              // عنوان المهمة
-              _buildLabel('عنوان المهمة'),
+              // العنوان
+              _buildLabel(isPurchase ? 'اسم المشترى' : 'عنوان المهمة'),
               const SizedBox(height: 8),
               _buildReadOnlyField(task.name),
 
               const SizedBox(height: AppSizes.paddingL),
 
-              // الوصف
-              _buildLabel('الوصف'),
+              // الوصف / الملاحظة
+              _buildLabel(isPurchase ? 'ملاحظة الشراء' : 'الوصف'),
               const SizedBox(height: 8),
               _buildReadOnlyField(
-                task.description.isEmpty ? 'لا يوجد وصف' : task.description,
+                task.description.isEmpty
+                    ? (isPurchase ? 'لا توجد ملاحظة' : 'لا يوجد وصف')
+                    : task.description,
                 maxLines: 3,
               ),
 
               const SizedBox(height: AppSizes.paddingL),
 
-              // الشخص المسؤول
+              // الحقول المختلفة حسب النوع
               _buildInfoRow('الشخص المسؤول', task.assigneeName),
-              _buildInfoRow('الأولوية', task.priority),
+              if (isPurchase) ...[
+                _buildInfoRow('التصنيف', task.category),
+                _buildInfoRow('السعر', '${task.points} ر.س'),
+              ] else ...[
+                _buildInfoRow('الأولوية', task.priorityLabel),
+              ],
               _buildInfoRow('الحالة', task.statusLabel, isStatus: true),
 
               const Spacer(),
 
-              // أزرار قبول / رفض
-              SizedBox(
-                width: double.infinity,
-                height: 48,
-                child: ElevatedButton(
-                  onPressed: controller.acceptTask,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppSizes.radiusM)),
+              // ✅ الأزرار تختلف حسب النوع
+              if (isPurchase)
+                SizedBox(
+                  width: double.infinity,
+                  height: 48,
+                  child: ElevatedButton(
+                    onPressed: () => Get.toNamed(AppRoutes.EDIT_PURCHASE, arguments: task),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppSizes.radiusM)),
+                    ),
+                    child: Text('تعديل الشراء', style: AppTextStyles.splashSubtitle.copyWith(color: Colors.white)),
                   ),
-                  child: Text('قبول', style: AppTextStyles.splashSubtitle.copyWith(color: Colors.white)),
-                ),
-              ),
-              const SizedBox(height: 10),
-              SizedBox(
-                width: double.infinity,
-                height: 48,
-                child: OutlinedButton(
-                  onPressed: controller.showRejectSheet,
-                  style: OutlinedButton.styleFrom(
-                    side: const BorderSide(color: Colors.red),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppSizes.radiusM)),
+                )
+              else ...[
+                SizedBox(
+                  width: double.infinity,
+                  height: 48,
+                  child: ElevatedButton(
+                    onPressed: controller.acceptTask,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppSizes.radiusM)),
+                    ),
+                    child: Text('قبول', style: AppTextStyles.splashSubtitle.copyWith(color: Colors.white)),
                   ),
-                  child: Text('رفض', style: AppTextStyles.splashSubtitle.copyWith(color: Colors.red)),
                 ),
-              ),
+                const SizedBox(height: 10),
+                SizedBox(
+                  width: double.infinity,
+                  height: 48,
+                  child: OutlinedButton(
+                    onPressed: controller.showRejectSheet,
+                    style: OutlinedButton.styleFrom(
+                      side: const BorderSide(color: Colors.red),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppSizes.radiusM)),
+                    ),
+                    child: Text('رفض', style: AppTextStyles.splashSubtitle.copyWith(color: Colors.red)),
+                  ),
+                ),
+              ],
 
               const SizedBox(height: AppSizes.paddingL),
             ],

@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:sawa_app/core/constants/app_colors.dart';
 import 'package:sawa_app/core/constants/app_sizes.dart';
 import 'package:sawa_app/core/constants/text_styles.dart';
-import 'package:sawa_app/core/routes/app_pages.dart';
 import 'package:sawa_app/features/tasks/data/models/task_model.dart';
 import '../controllers/search_controller.dart';
 import '../widgets/task_filter_bottom_sheet.dart';
@@ -23,16 +22,16 @@ class SearchScreen extends GetView<SearchPageController> {
               _buildHeader(),
               const SizedBox(height: AppSizes.paddingM),
               _buildSearchBar(context),
+              const SizedBox(height: AppSizes.paddingM),
+              _buildTabs(), // ✅ تابات المهام / المشتريات
               const SizedBox(height: AppSizes.paddingS),
               Expanded(
-                child: Obx(
-                  () => Column(
-                    children: [
-                      _buildResultsHeader(context),
-                      const SizedBox(height: AppSizes.paddingS),
-                      Expanded(child: _buildResultsList()),
-                    ],
-                  ),
+                child: Column(
+                  children: [
+                    _buildResultsHeader(context),
+                    const SizedBox(height: AppSizes.paddingS),
+                    Expanded(child: _buildResultsList()),
+                  ],
                 ),
               ),
             ],
@@ -94,34 +93,82 @@ class SearchScreen extends GetView<SearchPageController> {
             Icon(Icons.search, color: AppColors.primary, size: 20),
             const SizedBox(width: 8),
             Expanded(
-              child: TextField(
-                autofocus: true,
-                textDirection: TextDirection.rtl,
-                onChanged: controller.updateSearchText,
-                style: AppTextStyles.splashSubtitle.copyWith(
-                  fontSize: 14,
-                  color: AppColors.textPrimary,
-                ),
-                decoration: InputDecoration(
-                  border: InputBorder.none,
-                  hintText: 'بحث عن مهمة',
-                  hintStyle: AppTextStyles.splashSubtitle.copyWith(
+              child: Obx(
+                    () => TextField(
+                  autofocus: true,
+                  textDirection: TextDirection.rtl,
+                  onChanged: controller.updateSearchText,
+                  style: AppTextStyles.splashSubtitle.copyWith(
                     fontSize: 14,
-                    color: AppColors.textSecondary,
+                    color: AppColors.textPrimary,
+                  ),
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    hintText: controller.selectedTab.value == 0
+                        ? 'بحث عن مهمة'
+                        : 'بحث عن مشترى',
+                    hintStyle: AppTextStyles.splashSubtitle.copyWith(
+                      fontSize: 14,
+                      color: AppColors.textSecondary,
+                    ),
                   ),
                 ),
               ),
             ),
             Obx(
-              () => controller.searchText.value.isNotEmpty
+                  () => controller.searchText.value.isNotEmpty
                   ? IconButton(
-                      onPressed: controller.clearSearch,
-                      icon: const Icon(Icons.close, size: 18),
-                      color: AppColors.textSecondary,
-                    )
+                onPressed: controller.clearSearch,
+                icon: const Icon(Icons.close, size: 18),
+                color: AppColors.textSecondary,
+              )
                   : const SizedBox(width: AppSizes.paddingS),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  // ==============================
+  // ✅ تابات "المهام" / "المشتريات"
+  // ==============================
+  Widget _buildTabs() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
+      child: Obx(
+            () => Row(
+          children: [
+            Expanded(child: _buildTabButton('المهام', 0)),
+            const SizedBox(width: 8),
+            Expanded(child: _buildTabButton('المشتريات', 1)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTabButton(String title, int index) {
+    final active = controller.selectedTab.value == index;
+    return GestureDetector(
+      onTap: () => controller.changeTab(index),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 10),
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: active ? AppColors.primary : Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: active ? AppColors.primary : Colors.grey.shade300,
+          ),
+        ),
+        child: Text(
+          title,
+          style: AppTextStyles.splashSubtitle.copyWith(
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+            color: active ? Colors.white : AppColors.textSecondary,
+          ),
         ),
       ),
     );
@@ -138,9 +185,9 @@ class SearchScreen extends GetView<SearchPageController> {
         textDirection: TextDirection.ltr,
         children: [
           GestureDetector(
-            onTap: () => Get.toNamed(AppRoutes.ADD_PURCHASE),
+            onTap: () => TaskFilterBottomSheet.show(context), // ✅ تم تصليحه
             child: Obx(
-              () => Row(
+                  () => Row(
                 children: [
                   Icon(
                     Icons.filter_list,
@@ -167,9 +214,11 @@ class SearchScreen extends GetView<SearchPageController> {
             ),
           ),
           Obx(
-            () => Text(
+                () => Text(
               controller.searchText.value.isEmpty
+                  ? (controller.selectedTab.value == 0
                   ? 'كل المهام'
+                  : 'كل المشتريات')
                   : '${controller.searchResults.length} نتائج لـ "${controller.searchText.value}"',
               style: AppTextStyles.splashSubtitle.copyWith(
                 fontSize: 12,
@@ -188,12 +237,14 @@ class SearchScreen extends GetView<SearchPageController> {
   Widget _buildResultsList() {
     return Obx(() {
       final results = controller.searchResults;
+      final isPurchaseTab = controller.selectedTab.value == 1;
       if (results.isEmpty) return _buildNoResultsState();
       return ListView.separated(
         padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
         itemCount: results.length,
         separatorBuilder: (_, __) => const SizedBox(height: AppSizes.paddingS),
-        itemBuilder: (_, index) => _buildResultCard(results[index]),
+        itemBuilder: (_, index) =>
+            _buildResultCard(results[index], isPurchaseTab),
       );
     });
   }
@@ -220,7 +271,7 @@ class SearchScreen extends GetView<SearchPageController> {
   // ==============================
   // بطاقة نتيجة البحث
   // ==============================
-  Widget _buildResultCard(Task item) {
+  Widget _buildResultCard(Task item, bool isPurchaseTab) {
     return Container(
       padding: const EdgeInsets.all(AppSizes.paddingM),
       decoration: BoxDecoration(
@@ -278,33 +329,53 @@ class SearchScreen extends GetView<SearchPageController> {
                       ),
                     ),
                     const SizedBox(width: 6),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 3,
-                      ),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFE9EFFD),
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.access_time_outlined,
-                            size: 12,
+                    // ✅ للمشتريات منعرض السعر + التصنيف، للمهام منعرض التاريخ
+                    if (isPurchaseTab)
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 3,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFE9EFFD),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Text(
+                          '${item.category} • ${item.points} ر.س',
+                          style: AppTextStyles.splashSubtitle.copyWith(
+                            fontSize: 11,
                             color: AppColors.primary,
                           ),
-                          const SizedBox(width: 4),
-                          Text(
-                            item.dueDate.isEmpty ? 'اليوم' : item.dueDate,
-                            style: AppTextStyles.splashSubtitle.copyWith(
-                              fontSize: 11,
+                        ),
+                      )
+                    else
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 3,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFE9EFFD),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.access_time_outlined,
+                              size: 12,
                               color: AppColors.primary,
                             ),
-                          ),
-                        ],
+                            const SizedBox(width: 4),
+                            Text(
+                              item.dueDate.isEmpty ? 'اليوم' : item.dueDate,
+                              style: AppTextStyles.splashSubtitle.copyWith(
+                                fontSize: 11,
+                                color: AppColors.primary,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
                   ],
                 ),
               ],

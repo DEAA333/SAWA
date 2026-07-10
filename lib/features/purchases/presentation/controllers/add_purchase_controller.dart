@@ -61,10 +61,9 @@ class AddPurchaseController extends GetxController {
         points: int.tryParse(priceController.text) ?? 0,
       );
 
-      // ✅ نفس طريقة المهام بالضبط
+      // ✅ التعديل الأساسي: بنستدعي الدالة الموحّدة بدل ما نلعب بالقوائم مباشرة
       if (Get.isRegistered<ActivitiesController>()) {
-        Get.find<ActivitiesController>().purchasesList.add(newPurchase);
-        Get.find<ActivitiesController>().filteredPurchasesList.add(newPurchase);
+        Get.find<ActivitiesController>().addPurchase(newPurchase);
       }
 
       _showSuccessDialog();

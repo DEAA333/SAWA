@@ -27,13 +27,17 @@ import 'package:sawa_app/features/auth/presentation/bindings/login_binding.dart'
 import 'package:sawa_app/features/auth/presentation/screens/login_screen.dart';
 import 'package:sawa_app/features/onboarding/presentation/screens/onboarding_screen.dart';
 import 'package:sawa_app/features/purchases/presentation/bindings/add_purchase_binding.dart';
+import 'package:sawa_app/features/purchases/presentation/bindings/edit_purchase_binding.dart';
 import 'package:sawa_app/features/purchases/presentation/screens/add_purchase_screen.dart';
+import 'package:sawa_app/features/purchases/presentation/screens/edit_purchase_screen.dart';
 import 'package:sawa_app/features/statistics/presentation/bindings/statistics_binding.dart';
 import 'package:sawa_app/features/statistics/presentation/screens/statistics_screen.dart';
 import 'package:sawa_app/features/tasks/presentation/bindings/add_task_binding.dart';
+import 'package:sawa_app/features/tasks/presentation/bindings/edit_task_binding.dart';
 import 'package:sawa_app/features/tasks/presentation/bindings/task_details_binding.dart';
 import 'package:sawa_app/features/tasks/presentation/screens/add_task_screen.dart';
 import 'package:sawa_app/features/tasks/presentation/screens/complete_task_screen.dart';
+import 'package:sawa_app/features/tasks/presentation/screens/edit_task_screen.dart';
 import 'package:sawa_app/features/tasks/presentation/screens/task_details_screen.dart';
 import 'package:sawa_app/search/presentation/bindings/search_binding.dart';
 import 'package:sawa_app/search/presentation/screens/search_screen.dart';
@@ -145,6 +149,15 @@ class AppPages {
       page: () => const AddPurchaseScreen(),
       binding: AddPurchaseBinding(),
     ),
-
+    GetPage(
+      name: AppRoutes.EDIT_TASK,
+      page: () => const EditTaskScreen(),
+      binding: EditTaskBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.EDIT_PURCHASE,
+      page: () => const EditPurchaseScreen(),
+      binding: EditPurchaseBinding(),
+    ),
   ];
 }

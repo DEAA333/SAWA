@@ -23,6 +23,8 @@ abstract class AppRoutes {
   static const TASK_DETAILS = '/task-details';
   static const COMPLETE_TASK = '/complete-task';
   static const SEARCH = '/search';
+  static const EDIT_TASK = '/edit-task';
+  static const EDIT_PURCHASE = '/edit-purchase';
 
 
 }

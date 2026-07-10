@@ -3,10 +3,10 @@ import 'package:get/get.dart';
 import 'package:sawa_app/core/constants/app_colors.dart';
 import 'package:sawa_app/core/constants/app_sizes.dart';
 import 'package:sawa_app/core/constants/text_styles.dart';
-import '../controllers/add_task_controller.dart';
+import '../controllers/edit_task_controller.dart';
 
-class AddTaskScreen extends GetView<AddTaskController> {
-  const AddTaskScreen({super.key});
+class EditTaskScreen extends GetView<EditTaskController> {
+  const EditTaskScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +29,7 @@ class AddTaskScreen extends GetView<AddTaskController> {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       Text(
-                        'مهمة جديدة',
+                        'تعديل المهمة',
                         style: AppTextStyles.splashSubtitle.copyWith(
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
@@ -54,7 +54,6 @@ class AddTaskScreen extends GetView<AddTaskController> {
                   controller: controller.titleController,
                   textAlign: TextAlign.right,
                   textDirection: TextDirection.rtl,
-                  keyboardType: TextInputType.text,
                   decoration: _inputDecoration('مثال: غسيل الملابس'),
                   validator: (v) =>
                   v == null || v.isEmpty ? 'عنوان المهمة مطلوب' : null,
@@ -71,6 +70,94 @@ class AddTaskScreen extends GetView<AddTaskController> {
                   textDirection: TextDirection.rtl,
                   maxLines: 3,
                   decoration: _inputDecoration('أضف تفاصيل إضافية عن المهمة...'),
+                ),
+
+                const SizedBox(height: AppSizes.paddingL),
+
+                // الشخص المسؤول
+                _buildLabel('الشخص المسؤول'),
+                const SizedBox(height: 8),
+                Obx(
+                      () => Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    alignment: WrapAlignment.end,
+                    children: controller.familyMembers.map((member) {
+                      final active =
+                          controller.selectedAssigneeId.value == member['id'];
+                      return GestureDetector(
+                        onTap: () => controller.selectAssignee(
+                            member['id']!, member['name']!),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 14,
+                            vertical: 8,
+                          ),
+                          decoration: BoxDecoration(
+                            color: active
+                                ? AppColors.primary.withOpacity(0.1)
+                                : Colors.white,
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(
+                              color: active
+                                  ? AppColors.primary
+                                  : Colors.grey.shade300,
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(member['avatar']!,
+                                  style: const TextStyle(fontSize: 16)),
+                              const SizedBox(width: 6),
+                              Text(
+                                member['name']!,
+                                style: AppTextStyles.splashSubtitle.copyWith(
+                                  fontSize: 13,
+                                  color: active
+                                      ? AppColors.primary
+                                      : AppColors.textSecondary,
+                                  fontWeight: active
+                                      ? FontWeight.bold
+                                      : FontWeight.normal,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ),
+
+                const SizedBox(height: AppSizes.paddingL),
+
+                // الوقت
+                _buildLabel('الوقت'),
+                const SizedBox(height: 8),
+                TextFormField(
+                  controller: controller.timeController,
+                  readOnly: true,
+                  textAlign: TextAlign.right,
+                  onTap: () => controller.pickTime(context),
+                  decoration: _inputDecoration('اختر الوقت').copyWith(
+                    suffixIcon: const Icon(Icons.access_time),
+                  ),
+                ),
+
+                const SizedBox(height: AppSizes.paddingL),
+
+                // التاريخ
+                _buildLabel('التاريخ'),
+                const SizedBox(height: 8),
+                TextFormField(
+                  controller: controller.dateController,
+                  readOnly: true,
+                  textAlign: TextAlign.right,
+                  onTap: () => controller.pickDate(context),
+                  decoration: _inputDecoration('اختر التاريخ').copyWith(
+                    suffixIcon: const Icon(Icons.calendar_today_outlined),
+                  ),
                 ),
 
                 const SizedBox(height: AppSizes.paddingL),
@@ -115,83 +202,16 @@ class AddTaskScreen extends GetView<AddTaskController> {
                   ),
                 ),
 
-                const SizedBox(height: AppSizes.paddingL),
-
-                // الشخص المسؤول
-                _buildLabel('الشخص المسؤول'),
-                const SizedBox(height: 8),
-                Obx(
-                      () => Wrap(
-                    spacing: 8,
-                    alignment: WrapAlignment.end,
-                    children: controller.familyMembers.map((member) {
-                      final active =
-                          controller.selectedAssigneeId.value == member['id'];
-                      return GestureDetector(
-                        onTap: () => controller.selectAssignee(member['id']!, member['name']!),                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 14,
-                            vertical: 8,
-                          ),
-                          decoration: BoxDecoration(
-                            color: active
-                                ? AppColors.primary.withOpacity(0.1)
-                                : Colors.white,
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(
-                              color: active
-                                  ? AppColors.primary
-                                  : Colors.grey.shade300,
-                            ),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                member['avatar']!,
-                                style: const TextStyle(fontSize: 16),
-                              ),
-                              const SizedBox(width: 6),
-                              Text(
-                                member['name']!,
-                                style: AppTextStyles.splashSubtitle.copyWith(
-                                  fontSize: 13,
-                                  color: active
-                                      ? AppColors.primary
-                                      : AppColors.textSecondary,
-                                  fontWeight: active
-                                      ? FontWeight.bold
-                                      : FontWeight.normal,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                ),
-                _buildLabel('التاريخ'),
-                const SizedBox(height: 8),
-                TextFormField(
-                  controller: controller.dateController,
-                  readOnly: true,
-                  textAlign: TextAlign.right,
-                  onTap: () => controller.pickDate(context),
-                  decoration: _inputDecoration('اختر التاريخ').copyWith(
-                    suffixIcon: const Icon(Icons.calendar_today_outlined),
-                  ),
-                ),
                 const SizedBox(height: AppSizes.paddingXL),
 
-                // زر إنشاء المهمة
+                // زر تعديل المهمة
                 Obx(
                       () => SizedBox(
                     width: double.infinity,
                     height: 48,
                     child: ElevatedButton(
                       onPressed:
-                      controller.isLoading.value ? null : controller.addTask,
+                      controller.isLoading.value ? null : controller.saveChanges,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primary,
                         shape: RoundedRectangleBorder(
@@ -209,7 +229,7 @@ class AddTaskScreen extends GetView<AddTaskController> {
                         ),
                       )
                           : Text(
-                        'إنشاء المهمة',
+                        'تعديل المهمة',
                         style: AppTextStyles.splashSubtitle.copyWith(
                           color: Colors.white,
                           fontSize: 16,
