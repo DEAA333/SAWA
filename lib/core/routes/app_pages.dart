@@ -1,5 +1,4 @@
 import 'package:get/get.dart';
-import 'package:sawa_app/core/bindings/initial_binding.dart';
 import 'package:sawa_app/features/auth/presentation/bindings/forgot_password_binding.dart';
 import 'package:sawa_app/features/auth/presentation/bindings/new_Password_binding.dart';
 import 'package:sawa_app/features/auth/presentation/bindings/otp_binding.dart';
@@ -19,17 +18,25 @@ import 'package:sawa_app/features/family/presentation/screens/join_family_screen
 import 'package:sawa_app/features/family/presentation/screens/recover_code_screen.dart';
 import 'package:sawa_app/features/home/presentation/bindings/home_binding.dart';
 import 'package:sawa_app/features/home/presentation/bindings/notification_binding.dart';
-import 'package:sawa_app/features/home/presentation/controllers/home_controller.dart';
 import 'package:sawa_app/features/home/presentation/screens/home_screen.dart';
 import 'package:sawa_app/features/home/presentation/screens/notification_screen.dart';
 import 'package:sawa_app/features/onboarding/presentation/bindings/onboarding_binding.dart';
 import 'package:sawa_app/features/auth/presentation/bindings/login_binding.dart';
 import 'package:sawa_app/features/auth/presentation/screens/login_screen.dart';
 import 'package:sawa_app/features/onboarding/presentation/screens/onboarding_screen.dart';
+import 'package:sawa_app/features/profile/presentation/bindings/profile_binding.dart';
+import 'package:sawa_app/features/profile/presentation/screens/change_password_screen.dart';
+import 'package:sawa_app/features/profile/presentation/screens/edit_profile_screen.dart';
+import 'package:sawa_app/features/profile/presentation/screens/family_screen.dart';
+import 'package:sawa_app/features/profile/presentation/screens/language_screen.dart';
+import 'package:sawa_app/features/profile/presentation/screens/profile_screen.dart';
 import 'package:sawa_app/features/purchases/presentation/bindings/add_purchase_binding.dart';
 import 'package:sawa_app/features/purchases/presentation/bindings/edit_purchase_binding.dart';
+import 'package:sawa_app/features/purchases/presentation/screens/add_purchase_item_screen.dart';
 import 'package:sawa_app/features/purchases/presentation/screens/add_purchase_screen.dart';
 import 'package:sawa_app/features/purchases/presentation/screens/edit_purchase_screen.dart';
+import 'package:sawa_app/features/search/presentation/bindings/search_binding.dart';
+import 'package:sawa_app/features/search/presentation/screens/search_screen.dart';
 import 'package:sawa_app/features/statistics/presentation/bindings/statistics_binding.dart';
 import 'package:sawa_app/features/statistics/presentation/screens/statistics_screen.dart';
 import 'package:sawa_app/features/tasks/presentation/bindings/add_task_binding.dart';
@@ -39,9 +46,7 @@ import 'package:sawa_app/features/tasks/presentation/screens/add_task_screen.dar
 import 'package:sawa_app/features/tasks/presentation/screens/complete_task_screen.dart';
 import 'package:sawa_app/features/tasks/presentation/screens/edit_task_screen.dart';
 import 'package:sawa_app/features/tasks/presentation/screens/task_details_screen.dart';
-import 'package:sawa_app/search/presentation/bindings/search_binding.dart';
-import 'package:sawa_app/search/presentation/screens/search_screen.dart';
- import '../../features/splash/presentation/screens/splash_screen.dart';
+import '../../features/splash/presentation/screens/splash_screen.dart';
 
 part 'app_routes.dart';
 
@@ -49,10 +54,7 @@ class AppPages {
   AppPages._();
 
   static final routes = [
-    GetPage(
-      name: AppRoutes.SPLASH,
-      page: () => const SplashScreen(),
-    ),
+    GetPage(name: AppRoutes.SPLASH, page: () => const SplashScreen()),
     GetPage(
       name: AppRoutes.ONBOARDING,
       page: () => const OnboardingScreen(),
@@ -75,7 +77,7 @@ class AppPages {
     ),
     GetPage(
       name: AppRoutes.OTP,
-      page: () =>  const OtpScreen(),
+      page: () => const OtpScreen(),
       binding: OtpBinding(),
     ),
     GetPage(
@@ -150,6 +152,11 @@ class AppPages {
       binding: AddPurchaseBinding(),
     ),
     GetPage(
+      name: AppRoutes.ADD_PURCHASE_ITEM,
+      page: () => const AddPurchaseItemScreen(),
+      binding: AddPurchaseBinding(),
+    ),
+    GetPage(
       name: AppRoutes.EDIT_TASK,
       page: () => const EditTaskScreen(),
       binding: EditTaskBinding(),
@@ -158,6 +165,26 @@ class AppPages {
       name: AppRoutes.EDIT_PURCHASE,
       page: () => const EditPurchaseScreen(),
       binding: EditPurchaseBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.PROFILE,
+      page: () => const ProfileScreen(),
+      binding: ProfileBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.EDIT_PROFILE,
+      page: () => const EditProfileScreen(),
+      binding: ProfileBinding(),
+    ),
+    GetPage(name: AppRoutes.PROFILE_FAMILY, page: () => const FamilyScreen()),
+    GetPage(
+      name: AppRoutes.LANGUAGE,
+      page: () => const LanguageScreen(),
+      binding: ProfileBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.CHANGE_PASSWORD,
+      page: () => const ChangePasswordScreen(),
     ),
   ];
 }

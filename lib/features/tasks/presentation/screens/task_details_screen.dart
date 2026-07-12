@@ -59,6 +59,7 @@ class TaskDetailsScreen extends GetView<TaskDetailsController> {
                   border: Border.all(color: Colors.grey.shade200),
                 ),
                 child: Row(
+                  textDirection: TextDirection.rtl,
                   children: [
                     Container(
                       width: 10,
@@ -71,7 +72,7 @@ class TaskDetailsScreen extends GetView<TaskDetailsController> {
                     const SizedBox(width: 8),
                     Expanded(
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             task.name,
@@ -82,7 +83,7 @@ class TaskDetailsScreen extends GetView<TaskDetailsController> {
                           ),
                           const SizedBox(height: 6),
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
+                            mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),

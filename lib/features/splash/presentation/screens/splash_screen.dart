@@ -18,7 +18,11 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     Future.delayed(const Duration(seconds: 2), () {
-      Get.offNamed(AppRoutes.HOME);
+      // Logic for navigation:
+      // If first time -> ONBOARDING
+      // Else if not logged in -> LOGIN
+      // Else -> HOME
+      Get.offNamed(AppRoutes.ONBOARDING);
     });
   }
 

@@ -27,6 +27,16 @@ class LoginController extends GetxController {
     });
   }
 
+  void loginWithGoogle() {
+    // TODO: Implement Google Login logic
+    Get.snackbar('Google Login', 'Coming soon...');
+  }
+
+  void loginWithApple() {
+    // TODO: Implement Apple Login logic
+    Get.snackbar('Apple Login', 'Coming soon...');
+  }
+
   void goToForgotPassword() {
     Get.toNamed(AppRoutes.FORGOT_PASSWORD);
   }

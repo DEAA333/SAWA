@@ -19,12 +19,18 @@ abstract class AppRoutes {
   static const Notifications = '/notifications';
   static const ADD_TASK = '/add-task';
   static const ADD_PURCHASE = '/add-purchase';
+  static const ADD_PURCHASE_ITEM = '/add-purchase-item';
   static const STATISTICS = '/statistics';
   static const TASK_DETAILS = '/task-details';
   static const COMPLETE_TASK = '/complete-task';
   static const SEARCH = '/search';
   static const EDIT_TASK = '/edit-task';
   static const EDIT_PURCHASE = '/edit-purchase';
+  static const PROFILE = '/profile';
+  static const EDIT_PROFILE = '/edit-profile';
+  static const PROFILE_FAMILY = '/profile-family';
+  static const LANGUAGE = '/language';
+  static const CHANGE_PASSWORD = '/change-password';
 
 
 }

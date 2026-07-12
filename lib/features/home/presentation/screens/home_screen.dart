@@ -4,6 +4,7 @@ import 'package:sawa_app/features/activities/presentation/screens/activities_scr
 import 'package:sawa_app/features/home/presentation/controllers/home_controller.dart';
 import 'package:sawa_app/features/home/presentation/screens/home_body.dart';
 import 'package:sawa_app/features/home/widgets/custom_bottom_nav.dart';
+import 'package:sawa_app/features/profile/presentation/screens/profile_screen.dart';
 import 'package:sawa_app/features/statistics/presentation/screens/statistics_screen.dart';
 
 class HomeScreen extends GetView<HomeController> {
@@ -14,7 +15,7 @@ class HomeScreen extends GetView<HomeController> {
       HomeBody(),
       StatisticsScreen(),
       ActivitiesScreen(),
-      Center(child: Text('ملفي')),
+    ProfileScreen(),
 
   ];
 

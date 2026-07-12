@@ -249,7 +249,7 @@ class LoginScreen extends GetView<LoginController> {
                       child: Directionality(
                         textDirection: TextDirection.ltr,
                         child: OutlinedButton.icon(
-                          onPressed: () {},
+                          onPressed: controller.loginWithGoogle,
                           icon: const Icon(
                             Icons.g_mobiledata,
                             size: 30,
@@ -277,7 +277,7 @@ class LoginScreen extends GetView<LoginController> {
                       child: Directionality(
                         textDirection: TextDirection.ltr,
                         child: OutlinedButton.icon(
-                          onPressed: () {},
+                          onPressed: controller.loginWithApple,
                           icon: const Icon(
                             Icons.apple,
                             size: 30,

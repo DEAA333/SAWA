@@ -4,7 +4,9 @@ import 'package:sawa_app/core/constants/app_colors.dart';
 import 'package:sawa_app/core/constants/app_sizes.dart';
 import 'package:sawa_app/core/constants/text_styles.dart';
 import 'package:sawa_app/core/routes/app_pages.dart';
+import 'package:sawa_app/core/widgets/app_dialogs.dart';
 import 'package:sawa_app/features/tasks/data/models/task_model.dart';
+import 'package:sawa_app/features/purchases/presentation/widgets/purchase_filter_bottom_sheet.dart';
 import '../controllers/activities_controller.dart';
 
 class ActivitiesScreen extends GetView<ActivitiesController> {
@@ -164,6 +166,7 @@ class ActivitiesScreen extends GetView<ActivitiesController> {
                   final task = tasks[index];
                   return _buildDismissibleItem(
                     id: task.id,
+                    isPurchase: false,
                     onDelete: () => controller.deleteTask(task.id),
                     onEdit: () => Get.toNamed(AppRoutes.EDIT_TASK, arguments: task),
                     child: GestureDetector(
@@ -222,6 +225,7 @@ class ActivitiesScreen extends GetView<ActivitiesController> {
                   final purchase = purchases[index];
                   return _buildDismissibleItem(
                     id: purchase.id,
+                    isPurchase: true,
                     onDelete: () => controller.deletePurchase(purchase.id),
                     onEdit: () => Get.toNamed(AppRoutes.EDIT_PURCHASE, arguments: purchase),
                     child: GestureDetector(
@@ -322,45 +326,66 @@ class ActivitiesScreen extends GetView<ActivitiesController> {
     required RxString selected,
     required Function(String) onChanged,
   }) {
-    return SizedBox(
-      height: 36,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        reverse: true,
-        padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
-        itemCount: filters.length,
-        itemBuilder: (_, index) {
-          final filter = filters[index];
-          return Obx(() {
-            final active = selected.value == filter;
-            return GestureDetector(
-              onTap: () => onChanged(filter),
-              child: Container(
-                margin: const EdgeInsets.symmetric(horizontal: 4),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 6,
-                ),
-                decoration: BoxDecoration(
-                  color: active ? Color(0xFFE9EFFD) : Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(
-                    color: active ? AppColors.primary : Colors.grey.shade300,
+    return Row(
+      children: [
+        if (controller.selectedTab.value == 1)
+          Padding(
+            padding: const EdgeInsets.only(left: AppSizes.paddingM),
+            child: IconButton(
+              onPressed: () {
+                Get.bottomSheet(
+                  PurchaseFilterBottomSheet(
+                    selectedFilter: selected.value,
+                    onFilterSelected: onChanged,
                   ),
-                ),
-                child: Text(
-                  filter,
-                  style: AppTextStyles.splashSubtitle.copyWith(
-                    fontSize: 12,
-                    color: active ? AppColors.primary : AppColors.textSecondary,
-                    fontWeight: active ? FontWeight.bold : FontWeight.normal,
-                  ),
-                ),
-              ),
-            );
-          });
-        },
-      ),
+                );
+              },
+              icon: const Icon(Icons.tune, color: AppColors.primary),
+            ),
+          ),
+        Expanded(
+          child: SizedBox(
+            height: 36,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              reverse: true,
+              padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
+              itemCount: filters.length,
+              itemBuilder: (_, index) {
+                final filter = filters[index];
+                return Obx(() {
+                  final active = selected.value == filter;
+                  return GestureDetector(
+                    onTap: () => onChanged(filter),
+                    child: Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 4),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: active ? const Color(0xFFE9EFFD) : Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: active ? AppColors.primary : Colors.grey.shade300,
+                        ),
+                      ),
+                      child: Text(
+                        filter,
+                        style: AppTextStyles.splashSubtitle.copyWith(
+                          fontSize: 12,
+                          color: active ? AppColors.primary : AppColors.textSecondary,
+                          fontWeight: active ? FontWeight.bold : FontWeight.normal,
+                        ),
+                      ),
+                    ),
+                  );
+                });
+              },
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -369,6 +394,7 @@ class ActivitiesScreen extends GetView<ActivitiesController> {
   // ==============================
   Widget _buildDismissibleItem({
     required String id,
+    required bool isPurchase,
     required VoidCallback onDelete,
     VoidCallback? onEdit,
     required Widget child,
@@ -378,7 +404,7 @@ class ActivitiesScreen extends GetView<ActivitiesController> {
       direction: DismissDirection.startToEnd,
       confirmDismiss: (direction) async {
         // نعرض خيار حذف أو تعديل
-        return await _showSwipeActions(onDelete, onEdit: onEdit);
+        return await _showSwipeActions(onDelete, isPurchase: isPurchase, onEdit: onEdit);
       },
       background: Container(
         alignment: Alignment.centerLeft,
@@ -403,6 +429,7 @@ class ActivitiesScreen extends GetView<ActivitiesController> {
   Future<bool?> _showSwipeActions(
     VoidCallback onDelete, {
     VoidCallback? onEdit,
+    required bool isPurchase,
   }) async {
     return await Get.dialog<bool>(
       AlertDialog(
@@ -412,12 +439,17 @@ class ActivitiesScreen extends GetView<ActivitiesController> {
           children: [
             ListTile(
               leading: const Icon(Icons.delete_outline, color: Colors.red),
-              title: const Text('حذف'),
+              title: Text(isPurchase ? 'حذف العنصر' : 'حذف المهمة'),
               onTap: () {
-                onDelete();
-                Get.back(
-                  result: false,
-                ); // false = ما نحذف الـ widget (احنا حذفنا يدوي)
+                Get.back();
+                AppDialogs.showConfirm(
+                  title: isPurchase ? 'حذف العنصر؟' : 'حذف المهمة؟',
+                  message: 'هل أنت متأكد من رغبتك في الحذف؟ لا يمكن التراجع عن هذا الإجراء.',
+                  onPressed: () {
+                    onDelete();
+                    Get.back();
+                  },
+                );
               },
             ),
             ListTile(
